@@ -40,7 +40,7 @@ if !get(g:, 'tmux_navigator_no_mappings', 0)
   endif
 endif
 
-if empty($TMUX)
+if empty($TMUX) && $XDG_CURRENT_DESKTOP !=# "Hyprland"
   command! TmuxNavigateLeft call s:VimNavigate('h')
   command! TmuxNavigateDown call s:VimNavigate('j')
   command! TmuxNavigateUp call s:VimNavigate('k')
@@ -72,6 +72,7 @@ if !exists("g:tmux_navigator_no_wrap")
 endif
 
 let s:pane_position_from_direction = {'h': 'left', 'j': 'bottom', 'k': 'top', 'l': 'right'}
+let s:window_dir_from_direction = {'h': 'l', 'j': 'd', 'k': 'u', 'l': 'r'}
 
 function! s:TmuxOrTmateExecutable()
   return (match($TMUX, 'tmate') != -1 ? 'tmate' : 'tmux')
@@ -110,13 +111,22 @@ function! s:NeedsVitalityRedraw()
   return exists('g:loaded_vitality') && v:version < 704 && !has("patch481")
 endfunction
 
-function! s:ShouldForwardNavigationBackToTmux(tmux_last_pane, at_tab_page_edge)
-  if g:tmux_navigator_disable_when_zoomed && s:TmuxVimPaneIsZoomed()
+function! s:ShouldForwardNavigation(tmux_last_pane, at_tab_page_edge)
+  if !empty($TMUX) && g:tmux_navigator_disable_when_zoomed && s:TmuxVimPaneIsZoomed()
     return 0
   endif
   return a:tmux_last_pane || a:at_tab_page_edge
 endfunction
 
+function! s:IsTmuxAtEdge(direction)
+  if empty($TMUX)
+    return 1
+  endif
+  let pane_pos = s:pane_position_from_direction[a:direction]
+  let edge_check = 'display-message -p "#{pane_at_' . pane_pos . '}"'
+  let is_at_edge = s:TmuxCommand(edge_check)
+  return is_at_edge ==# "1\n"
+endfunction
 
 function! s:TmuxAwareNavigate(direction)
   let nr = winnr()
@@ -128,7 +138,12 @@ function! s:TmuxAwareNavigate(direction)
   " Forward the switch panes command to tmux if:
   " a) we're toggling between the last tmux pane;
   " b) we tried switching windows in vim but it didn't have effect.
-  if s:ShouldForwardNavigationBackToTmux(tmux_last_pane, at_tab_page_edge)
+  if s:ShouldForwardNavigation(tmux_last_pane, at_tab_page_edge)
+    if s:IsTmuxAtEdge(a:direction)
+      " If tmux is at edge, move window
+      call system("hyprctl dispatch movefocus " . s:window_dir_from_direction[a:direction])
+      return
+    endif
     if g:tmux_navigator_save_on_switch == 1
       try
         update " save the active buffer. See :help update

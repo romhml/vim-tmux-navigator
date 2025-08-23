@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SEAMLESS_NAV=$CURRENT_DIR/scripts/seamless-navigate.sh
+
 get_tmux_option() {
   local option value default
   option="$1"
@@ -14,8 +17,8 @@ get_tmux_option() {
 
   # Deprecated, for backward compatibility
   if [[ $value == 'null' ]]; then
-      echo ""
-      return
+    echo ""
+    return
   fi
 
   echo "$value"
@@ -49,11 +52,11 @@ main() {
   move_down="$(get_tmux_option "@vim_navigator_mapping_down" 'C-j')"
   move_prev="$(get_tmux_option "@vim_navigator_mapping_prev" 'C-\')"
 
-  for k in $(echo "$move_left");  do bind_key_vim "$k" "select-pane -L"; done
-  for k in $(echo "$move_down");  do bind_key_vim "$k" "select-pane -D"; done
-  for k in $(echo "$move_up");    do bind_key_vim "$k" "select-pane -U"; done
-  for k in $(echo "$move_right"); do bind_key_vim "$k" "select-pane -R"; done
-  for k in $(echo "$move_prev");  do bind_key_vim "$k" "select-pane -l"; done
+  for k in $(echo "$move_left");  do bind_key_vim "$k" "run-shell '$SEAMLESS_NAV left l'"; done
+  for k in $(echo "$move_down");  do bind_key_vim "$k" "run-shell '$SEAMLESS_NAV bottom d'"; done
+  for k in $(echo "$move_up");    do bind_key_vim "$k" "run-shell '$SEAMLESS_NAV top u'"; done
+  for k in $(echo "$move_right"); do bind_key_vim "$k" "run-shell '$SEAMLESS_NAV right r'"; done
+  for k in $(echo "$move_prev");  do bind_key_vim "$k" "run-shell select-pane -l"; done
 
   # Restoring clear screen
   clear_screen="$(get_tmux_option "@vim_navigator_prefix_mapping_clear_screen" 'C-l')"
