@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SEAMLESS_NAV=$CURRENT_DIR/scripts/seamless-navigate.sh
+HYPR_NAV=$CURRENT_DIR/scripts/hypr-navigate.sh
 
 get_tmux_option() {
   local option value default
@@ -52,10 +52,10 @@ main() {
   move_down="$(get_tmux_option "@vim_navigator_mapping_down" 'C-j')"
   move_prev="$(get_tmux_option "@vim_navigator_mapping_prev" 'C-\')"
 
-  for k in $(echo "$move_left");  do bind_key_vim "$k" "run-shell '$SEAMLESS_NAV left l'"; done
-  for k in $(echo "$move_down");  do bind_key_vim "$k" "run-shell '$SEAMLESS_NAV bottom d'"; done
-  for k in $(echo "$move_up");    do bind_key_vim "$k" "run-shell '$SEAMLESS_NAV top u'"; done
-  for k in $(echo "$move_right"); do bind_key_vim "$k" "run-shell '$SEAMLESS_NAV right r'"; done
+  for k in $(echo "$move_left");  do bind_key_vim "$k" "run-shell '$HYPR_NAV left l'"; done
+  for k in $(echo "$move_down");  do bind_key_vim "$k" "run-shell '$HYPR_NAV bottom d'"; done
+  for k in $(echo "$move_up");    do bind_key_vim "$k" "run-shell '$HYPR_NAV top u'"; done
+  for k in $(echo "$move_right"); do bind_key_vim "$k" "run-shell '$HYPR_NAV right r'"; done
   for k in $(echo "$move_prev");  do bind_key_vim "$k" "run-shell select-pane -l"; done
 
   # Restoring clear screen

@@ -16,12 +16,14 @@ send_nav () {
 }
 
 WIN_CLASS=$(get_window_attr "class")
-if [[ "$WIN_CLASS" != "Alacritty" ]]; then
+if [[ "$WIN_CLASS" != "kitty" ]]; then
+  echo "not kitty"
   move_hypr
 fi
 
 TITLE=$(get_window_attr "title")
-if [[ "$TITLE" != *nvim* && "$TITLE" != *tmux* ]]; then
+if [[ "$TITLE" != *nvim* && "$TITLE" != *:*:* ]]; then
+  echo "title mismatch"
   move_hypr 
 fi
 
