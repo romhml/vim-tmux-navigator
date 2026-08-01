@@ -141,7 +141,7 @@ function! s:TmuxAwareNavigate(direction)
   if s:ShouldForwardNavigation(tmux_last_pane, at_tab_page_edge)
     if s:IsTmuxAtEdge(a:direction)
       " If tmux is at edge, move window
-      call system("hyprctl dispatch movefocus " . s:window_dir_from_direction[a:direction])
+      call system("hyprctl eval 'hl.dispatch(hl.dsp.focus({ direction = \"" . s:window_dir_from_direction[a:direction] . "\" }))'")
       return
     endif
     if g:tmux_navigator_save_on_switch == 1

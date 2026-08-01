@@ -3,7 +3,7 @@
 DIRECTION=$1
 
 move_hypr () {
-  hyprctl dispatch movefocus $DIRECTION
+  hyprctl eval "hl.dispatch(hl.dsp.focus({ direction = \"$DIRECTION\" }))"
   exit
 }
 
@@ -12,18 +12,16 @@ get_window_attr () {
 }
 
 send_nav () {
-  hyprctl dispatch sendshortcut "CTRL, $1, pid:$2"
+  hyprctl eval "hl.dispatch(hl.dsp.send_shortcut({ mods = \"CTRL\", key = \"$1\", window = \"pid:$2\" }))"
 }
 
 WIN_CLASS=$(get_window_attr "class")
 if [[ "$WIN_CLASS" != "kitty" ]]; then
-  echo "not kitty"
   move_hypr
 fi
 
 TITLE=$(get_window_attr "title")
 if [[ "$TITLE" != *nvim* && "$TITLE" != *:*:* ]]; then
-  echo "title mismatch"
   move_hypr 
 fi
 
