@@ -52,11 +52,11 @@ main() {
   move_down="$(get_tmux_option "@vim_navigator_mapping_down" 'C-j')"
   move_prev="$(get_tmux_option "@vim_navigator_mapping_prev" 'C-\')"
 
-  for k in $(echo "$move_left");  do bind_key_vim "$k" "run-shell '$HYPR_NAV left l'"; done
-  for k in $(echo "$move_down");  do bind_key_vim "$k" "run-shell '$HYPR_NAV bottom d'"; done
-  for k in $(echo "$move_up");    do bind_key_vim "$k" "run-shell '$HYPR_NAV top u'"; done
-  for k in $(echo "$move_right"); do bind_key_vim "$k" "run-shell '$HYPR_NAV right r'"; done
-  for k in $(echo "$move_prev");  do bind_key_vim "$k" "run-shell select-pane -l"; done
+  for k in $(echo "$move_left");  do bind_key_vim "$k" "run-shell '$HYPR_NAV left l || true'"; done
+  for k in $(echo "$move_down");  do bind_key_vim "$k" "run-shell '$HYPR_NAV bottom d || true'"; done
+  for k in $(echo "$move_up");    do bind_key_vim "$k" "run-shell '$HYPR_NAV top u' || true"; done
+  for k in $(echo "$move_right"); do bind_key_vim "$k" "run-shell '$HYPR_NAV right r' || true"; done
+  for k in $(echo "$move_prev");  do bind_key_vim "$k" "run-shell select-pane -l || true"; done
 
   # Restoring clear screen
   clear_screen="$(get_tmux_option "@vim_navigator_prefix_mapping_clear_screen" 'C-l')"
