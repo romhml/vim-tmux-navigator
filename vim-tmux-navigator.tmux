@@ -54,8 +54,8 @@ main() {
 
   for k in $(echo "$move_left");  do bind_key_vim "$k" "run-shell '$HYPR_NAV left l || true'"; done
   for k in $(echo "$move_down");  do bind_key_vim "$k" "run-shell '$HYPR_NAV bottom d || true'"; done
-  for k in $(echo "$move_up");    do bind_key_vim "$k" "run-shell '$HYPR_NAV top u' || true"; done
-  for k in $(echo "$move_right"); do bind_key_vim "$k" "run-shell '$HYPR_NAV right r' || true"; done
+  for k in $(echo "$move_up");    do bind_key_vim "$k" "run-shell '$HYPR_NAV top u || true'"; done
+  for k in $(echo "$move_right"); do bind_key_vim "$k" "run-shell '$HYPR_NAV right r || true'"; done
   for k in $(echo "$move_prev");  do bind_key_vim "$k" "run-shell select-pane -l || true"; done
 
   # Restoring clear screen
