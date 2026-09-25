@@ -41,8 +41,8 @@ bind_key_vim() {
 
   # sending C-/ according to https://github.com/tmux/tmux/issues/1827
   tmux bind-key -n "$key" if-shell "$is_vim" "send-keys '$key'" "$tmux_cmd"
-  # tmux < 3.0 cannot parse "$tmux_cmd" as one argument, thus copying as multiple arguments
-  tmux bind-key -T copy-mode-vi "$key" $tmux_cmd
+  # Pass the shell command as one argument; splitting tmux_cmd loses its quoting.
+  tmux bind-key -T copy-mode-vi "$key" run-shell "$3"
 }
 
 main() {
@@ -52,11 +52,11 @@ main() {
   move_down="$(get_tmux_option "@vim_navigator_mapping_down" 'C-j')"
   move_prev="$(get_tmux_option "@vim_navigator_mapping_prev" 'C-\')"
 
-  for k in $(echo "$move_left");  do bind_key_vim "$k" "run-shell '$HYPR_NAV left l || true'"; done
-  for k in $(echo "$move_down");  do bind_key_vim "$k" "run-shell '$HYPR_NAV bottom d || true'"; done
-  for k in $(echo "$move_up");    do bind_key_vim "$k" "run-shell '$HYPR_NAV top u || true'"; done
-  for k in $(echo "$move_right"); do bind_key_vim "$k" "run-shell '$HYPR_NAV right r || true'"; done
-  for k in $(echo "$move_prev");  do bind_key_vim "$k" "run-shell select-pane -l || true"; done
+  for k in $(echo "$move_left");  do bind_key_vim "$k" "run-shell '$HYPR_NAV left l || true'" "$HYPR_NAV left l || true"; done
+  for k in $(echo "$move_down");  do bind_key_vim "$k" "run-shell '$HYPR_NAV bottom d || true'" "$HYPR_NAV bottom d || true"; done
+  for k in $(echo "$move_up");    do bind_key_vim "$k" "run-shell '$HYPR_NAV top u || true'" "$HYPR_NAV top u || true"; done
+  for k in $(echo "$move_right"); do bind_key_vim "$k" "run-shell '$HYPR_NAV right r || true'" "$HYPR_NAV right r || true"; done
+  for k in $(echo "$move_prev");  do bind_key_vim "$k" "run-shell 'tmux select-pane -l || true'" "tmux select-pane -l || true"; done
 
   # Restoring clear screen
   clear_screen="$(get_tmux_option "@vim_navigator_prefix_mapping_clear_screen" 'C-l')"
